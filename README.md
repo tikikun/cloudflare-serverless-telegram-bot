@@ -1,5 +1,31 @@
 # A chatbot entirely built on Cloudflare Worker
 
+List of required secrets for the cloudflare worker project
+```
+[
+  {
+    "name": "CHATID",
+    "type": "secret_text"
+  },
+  {
+    "name": "DOMINIC_CLIENT_ID",
+    "type": "secret_text"
+  },
+  {
+    "name": "DOMINIC_CLIENT_SECRET",
+    "type": "secret_text"
+  },
+  {
+    "name": "dominicDomain",
+    "type": "secret_text"
+  },
+  {
+    "name": "TELEGRAM_KEY",
+    "type": "secret_text"
+  }
+]
+```
+
 Data flow 
 telegram webhook --> cloudflare worker -> services api -> cloudflare worker -> telegram enpoint
 
