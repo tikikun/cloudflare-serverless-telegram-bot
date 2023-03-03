@@ -71,6 +71,7 @@ async function mainListener(request: Request) {
 			'/listfiles': (chatId, apiKey) => dominicListFiles(chatId, apiKey),
 			'/downstats': (chatId, apiKey) => dominicReportDownloadsStatus(chatId, apiKey),
 			'/pauseall': (chatId, apiKey) => pauseAll(chatId, apiKey),
+			'/askdom': (chatId, apiKey, ...question_parts) => askDom(chatId, apiKey, ...question_parts),
 		};
 
 		/**
@@ -224,6 +225,19 @@ const pauseAll: TelegramOps = async (chatId: string, apiKey: string) => {
 
 	await sendMessage(chatId, apiKey, `${data}`);
 	return new Response('Successfully pause all ');
+};
+
+const askDom: TelegramOps = async (chatId: string, apiKey: string, ...question_parts) => {
+	console.log(DOM_ENDPOINT);
+	const question = question_parts.join(' ');
+	const url = `${dominicDomain}/${DOM_ENDPOINT}`;
+	const queryUrl = `${url}?${new URLSearchParams({ question: question })}`;
+	console.log(queryUrl);
+	const response = await fetch(queryUrl, {
+		method: 'GET',
+		headers: authHeaders(),
+	});
+	return new Response('Successfully asked Dom');
 };
 
 export { TelegramOps };
