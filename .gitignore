@@ -4,6 +4,7 @@
 *.lock
 *.log
 backend_config.json
+worker_config.json
 
 **/dist
 secret_local
