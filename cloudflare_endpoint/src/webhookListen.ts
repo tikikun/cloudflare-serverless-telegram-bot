@@ -228,11 +228,11 @@ const pauseAll: TelegramOps = async (chatId: string, apiKey: string) => {
 };
 
 const askDom: TelegramOps = async (chatId: string, apiKey: string, ...question_parts) => {
-	console.log(DOM_ENDPOINT);
+	//console.log(DOM_ENDPOINT);
 	const question = question_parts.join(' ');
 	const url = `${dominicDomain}/${DOM_ENDPOINT}`;
 	const queryUrl = `${url}?${new URLSearchParams({ question: question })}`;
-	console.log(queryUrl);
+	//console.log(queryUrl);
 	const response = await fetch(queryUrl, {
 		method: 'GET',
 		headers: authHeaders(),

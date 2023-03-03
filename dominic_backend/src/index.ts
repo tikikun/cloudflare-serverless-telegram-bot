@@ -164,7 +164,6 @@ app.get('/notiDownloaded', async (req: Request, res: Response) => {
 app.get('/askDom', async (req: Request, res: Response) => {
 	try {
 		const question = String(req.query.question);
-		model.streaming
 		const openAiResponse = await chain.call({ input: question });
 		console.log(openAiResponse.response)
 		res.send(openAiResponse.response)
