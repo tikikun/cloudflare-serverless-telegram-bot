@@ -4,7 +4,10 @@ compatibility_date = "2022-05-03"
 
 # this is used to set all the required endpoint to map between dominic and CF worker
 [vars]
+DOWNLOAD_FILE = "downloadfile"
 LIST_STORAGE_VOLUME = "listfiles"
+DOWNLOAD_STATS = "downloads"
+PAUSEALL_DOWNLOADS = "pauseAll"
 
 # The necessary secrets are:
 # - CHATID

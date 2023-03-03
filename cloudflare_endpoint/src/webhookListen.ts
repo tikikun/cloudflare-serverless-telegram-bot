@@ -154,7 +154,7 @@ const dominicGetFile: TelegramOps = async (
 	uri: string,
 	folderName: string = ''
 ) => {
-	const url = `${dominicDomain}/downloadfile`;
+	const url = `${dominicDomain}/${DOWNLOAD_FILE}`;
 	let queryString = `uri=${uri}`;
 	if (folderName) {
 		queryString += `&folderName=${folderName}`;
@@ -174,8 +174,7 @@ const dominicGetFile: TelegramOps = async (
 };
 
 const dominicListFiles: TelegramOps = async (chatId: string, apiKey: string) => {
-	const url = `${dominicDomain}/${LIST_STORAGE_VOLUME}}`;
-
+	const url = `${dominicDomain}/${LIST_STORAGE_VOLUME}`;
 	const response = await fetch(url, {
 		method: 'GET',
 		headers: authHeaders(),
@@ -193,7 +192,7 @@ const dominicListFiles: TelegramOps = async (chatId: string, apiKey: string) => 
 };
 
 const dominicReportDownloadsStatus: TelegramOps = async (chatId: string, apiKey: string) => {
-	const url = `${dominicDomain}/downloads`;
+	const url = `${dominicDomain}/${DOWNLOAD_STATS}`;
 
 	const response = await fetch(url, {
 		method: 'GET',
@@ -215,7 +214,7 @@ const dominicReportDownloadsStatus: TelegramOps = async (chatId: string, apiKey:
 };
 
 const pauseAll: TelegramOps = async (chatId: string, apiKey: string) => {
-	const url = `${dominicDomain}/pauseAll`;
+	const url = `${dominicDomain}/${PAUSEALL_DOWNLOADS}`;
 
 	const response = await fetch(url, {
 		method: 'GET',
