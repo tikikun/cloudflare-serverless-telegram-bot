@@ -39,7 +39,6 @@ Just like below images
 # Installation and setup
 To make cloudflare worker to be working normally, here is the required secret files you need to input into the cloudflare secret
 
-```
 List of required secrets for the cloudflare worker project
 ```
 [
