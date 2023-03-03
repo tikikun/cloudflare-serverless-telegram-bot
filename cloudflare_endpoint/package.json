@@ -1,0 +1,13 @@
+{
+	"private": true,
+	"version": "0.0.0",
+	"scripts": {
+		"deploy": "wrangler publish --name bot_listener_webhook",
+		"dev": "wrangler dev --local",
+		"dev_schedule": "wrangler dev --test-scheduled"
+	},
+	"devDependencies": {
+		"@cloudflare/workers-types": "^3.0.0",
+		"wrangler": "2.11.1"
+	}
+}

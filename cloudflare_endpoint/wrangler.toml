@@ -1,0 +1,12 @@
+name = "bot_listener_webhook" # todo
+main = "./src/webhookListen.ts"
+compatibility_date = "2022-05-03"
+
+[vars]
+# The necessary secrets are:
+# - CHATID
+# - TELEGRAM_KEY
+# Run `echo <VALUE> | wrangler secret put <NAME>` for each of these
+
+[triggers]
+crons = ["0 0 * * *"]
