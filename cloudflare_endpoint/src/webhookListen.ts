@@ -154,7 +154,7 @@ const dominicGetFile: TelegramOps = async (
 	uri: string,
 	folderName: string = ''
 ) => {
-	const url = 'https://alantest.daogiatuan.com/downloadfile';
+	const url = `${dominicDomain}/downloadfile`;
 	let queryString = `uri=${uri}`;
 	if (folderName) {
 		queryString += `&folderName=${folderName}`;
@@ -174,7 +174,7 @@ const dominicGetFile: TelegramOps = async (
 };
 
 const dominicListFiles: TelegramOps = async (chatId: string, apiKey: string) => {
-	const url = 'https://alantest.daogiatuan.com/listfiles';
+	const url = `${dominicDomain}/${LIST_STORAGE_VOLUME}}`;
 
 	const response = await fetch(url, {
 		method: 'GET',
@@ -193,7 +193,7 @@ const dominicListFiles: TelegramOps = async (chatId: string, apiKey: string) => 
 };
 
 const dominicReportDownloadsStatus: TelegramOps = async (chatId: string, apiKey: string) => {
-	const url = 'https://alantest.daogiatuan.com/downloads';
+	const url = `${dominicDomain}/downloads`;
 
 	const response = await fetch(url, {
 		method: 'GET',
@@ -215,7 +215,7 @@ const dominicReportDownloadsStatus: TelegramOps = async (chatId: string, apiKey:
 };
 
 const pauseAll: TelegramOps = async (chatId: string, apiKey: string) => {
-	const url = 'https://alantest.daogiatuan.com/pauseAll';
+	const url = `${dominicDomain}/pauseAll`;
 
 	const response = await fetch(url, {
 		method: 'GET',

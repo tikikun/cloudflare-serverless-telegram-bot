@@ -2,7 +2,10 @@ name = "bot_listener_webhook" # todo
 main = "./src/webhookListen.ts"
 compatibility_date = "2022-05-03"
 
+# this is used to set all the required endpoint to map between dominic and CF worker
 [vars]
+LIST_STORAGE_VOLUME = "listfiles"
+
 # The necessary secrets are:
 # - CHATID
 # - TELEGRAM_KEY
