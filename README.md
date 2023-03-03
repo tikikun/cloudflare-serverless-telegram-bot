@@ -64,8 +64,11 @@ List of required secrets for the cloudflare worker project
   }
 ]
 ```
-CHATID -> Your chat session you wish the bot to respond to
-DOMINIC_CLIENT_ID -> Dominic is being served through Cloudflare Tunnel, you need to authen, need CLIENT_ID and SECRET
-DOMINIC_CLIENT_SECRET -> Dominic is being served through Cloudflare Tunnel, you need to authen, need CLIENT_ID and SECRET
+## Explaination
+These secret vars have follwing purposes:
+
+ - CHATID -> Your chat session you wish the bot to respond to
+ - DOMINIC_CLIENT_ID -> Dominic is being served through Cloudflare Tunnel, you need to authen, need CLIENT_ID and SECRET
+ - DOMINIC_CLIENT_SECRET -> Dominic is being served through Cloudflare Tunnel, you need to authen, need CLIENT_ID and SECRET
 dominicDomain -> Domain of dominic, for example https://iam.dominic.com
-TELEGRAM_KEY -> Key of your bot, you can get from your botfather UI on telegram
+- TELEGRAM_KEY -> Key of your bot, you can get from your botfather UI on telegram
