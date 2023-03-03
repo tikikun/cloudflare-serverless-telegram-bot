@@ -8,6 +8,7 @@ DOWNLOAD_FILE = "downloadfile"
 LIST_STORAGE_VOLUME = "listfiles"
 DOWNLOAD_STATS = "downloads"
 PAUSEALL_DOWNLOADS = "pauseAll"
+DOM_ENDPOINT = "askdom"
 
 # The necessary secrets are:
 # - CHATID

@@ -1,16 +1,21 @@
+import { OpenAIChat } from 'langchain/llms';
+import { BufferWindowMemory } from "langchain/memory";
+import { ConversationChain } from "langchain/chains";
+
 import express, { Request, Response } from 'express';
 import * as fs from 'fs';
 
-
-// Reading configuration from file 
+// Reading configuration from file
 const configFilePath = '../backend_config.json';
 
 // Read the JSON file synchronously and parse its contents into a JavaScript object
 const configFileContents = fs.readFileSync(configFilePath, 'utf-8');
 const configObject = JSON.parse(configFileContents);
 
-
-
+// Initiate openai service
+const model = new OpenAIChat({ openAIApiKey:configObject.openaikey,modelName: 'gpt-3.5-turbo' });
+const memory = new BufferWindowMemory({ k: 30 });
+const chain = new ConversationChain({ llm: model, memory: memory });
 
 const app = express();
 
@@ -123,7 +128,7 @@ app.get('/pauseAll', async (req: Request, res: Response) => {
 
 app.get('/notiDownloaded', async (req: Request, res: Response) => {
 	try {
-    // Get status of downloading files from json rpc
+		// Get status of downloading files from json rpc
 		const gid: string = String(req.query.gid);
 		const response_downstats = await fetch('http://localhost:6800/jsonrpc', {
 			method: 'POST',
@@ -149,13 +154,25 @@ app.get('/notiDownloaded', async (req: Request, res: Response) => {
 			message += '\t🗿🗿 ' + item + '\n';
 		});
 
-    // Send message to telegram user
-    await sendTelegramMessage(message,'markdown')
-
-    
+		// Send message to telegram user
+		await sendTelegramMessage(message, 'markdown');
 	} catch (err) {
 		res.status(500).json({ err });
 	}
+});
+
+app.get('/askDom', async (req: Request, res: Response) => {
+	try {
+		const question = String(req.query.question);
+		const openAiResponse = await chain.call({ input: question });
+		console.log(openAiResponse.response)
+		res.send(openAiResponse.response)
+		await sendTelegramMessage(openAiResponse.response, 'markdown');
+		;
+	} catch (err) {
+		res.status(500).json({ err });
+	}
+
 });
 
 app.listen(3000, () => {
@@ -187,24 +204,19 @@ async function sendMagnetToAria2c(uri: string, folder: string) {
 	return data;
 }
 
+async function sendTelegramMessage(message: string, parse_mode: string) {
+	const chat_id = configObject.chat_id;
+	const telegram_key = configObject.telegram_key;
 
-async function sendTelegramMessage(message:string,parse_mode:string) {
-  const chat_id = configObject.chat_id;
-  const telegram_key = configObject.telegram_key;
-  
-  const payload = {
-    chat_id: chat_id,
-    text: message,
-    disable_notification: false,
-    parse_mode: parse_mode,
-}
-  const response = await fetch(
-    `https://api.telegram.org/bot${telegram_key}/sendMessage`,
-    {
-      method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    }
-    
-  )
+	const payload = {
+		chat_id: chat_id,
+		text: message,
+		disable_notification: false,
+		parse_mode: parse_mode,
+	};
+	const response = await fetch(`https://api.telegram.org/bot${telegram_key}/sendMessage`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(payload),
+	});
 }
