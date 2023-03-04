@@ -2,8 +2,8 @@
 
 
 
-Data flow 
-telegram webhook --> cloudflare worker -> services api -> cloudflare worker -> telegram enpoint
+# Workflow of how This chatbot works
+![](assets/2023-03-04-14-49-56.png)
 
 Will build more endpoint in the future, using typescript
 The features are 
