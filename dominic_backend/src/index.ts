@@ -266,7 +266,6 @@ app.get('/quickDom', async (req: Request, res: Response) => {
 				} catch (err) {
 					return res.status(500).json({ err });
 				}
-				return res.json({ result: 'okay great I will download something for you' });
 			} else {
 				const sorryMessage =
 					'Sorry I cannot find that action you specified, currently only support download file';
