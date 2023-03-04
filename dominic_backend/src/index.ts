@@ -1,6 +1,8 @@
 import { OpenAIChat } from 'langchain/llms';
 import { BufferWindowMemory } from "langchain/memory";
 import { ConversationChain } from "langchain/chains";
+import { HNSWLib } from "langchain/vectorstores";
+import { OpenAIEmbeddings } from "langchain/embeddings";
 
 import express, { Request, Response } from 'express';
 import * as fs from 'fs';
@@ -16,6 +18,26 @@ const configObject = JSON.parse(configFileContents);
 const model = new OpenAIChat({ openAIApiKey:configObject.openaikey,modelName: 'gpt-3.5-turbo' });
 const memory = new BufferWindowMemory({ k: 30 });
 const chain = new ConversationChain({ llm: model, memory: memory });
+const embeddings = new OpenAIEmbeddings({ openAIApiKey:configObject.openaikey});
+
+// Command list
+const com_list = ['getfxrate - fxrate',
+'getfxratevnd - fxrateVND',
+'getcryptoprice - get crypto price',
+'getbtc - get bitcoin price',
+'listfiles - listfiles on the server now',
+'getfile - download the file using the link',
+'downstats - get status of downloads',
+'pauseall - pause all operation (seeding)',
+'askdom - to ask Dom (memory size 30']
+
+// Set up vector store
+const vectorStore = await HNSWLib.fromTexts(
+	com_list,
+	Array.from({ length: com_list.length }, (_, i) => ({ id: i })),
+	embeddings
+  );
+  
 
 const app = express();
 
@@ -174,6 +196,22 @@ app.get('/askDom', async (req: Request, res: Response) => {
 	}
 
 });
+
+app.get('/quickDom',async (req:Request, res: Response) => {
+	try {
+		const question = String(req.query.question);
+		const result = await vectorStore.similaritySearchWithScore(question);
+		console.log(result)
+		res.json(result)
+		//const answer = await model.call(question);
+		//console.log(answer)
+		//res.send(answer)
+		//await sendTelegramMessage(answer, 'markdown');
+		;
+	} catch (err) {
+		res.status(500).json({err})
+	}
+})
 
 app.listen(3000, () => {
 	console.log('Server listening on port 3000');
