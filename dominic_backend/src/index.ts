@@ -255,12 +255,24 @@ app.get('/quickDom', async (req: Request, res: Response) => {
 				${question}
 				"""
 				Okay your turn go Folder name:`);
-				console.log(linkToDownload, folderName);
+				await sendTelegramMessage(
+					`Hello Alan I will down the file with link 🔗 ${linkToDownload} to 📁 ${folderName}, have a great day`,
+					'markdown'
+				);
+				try {
+					await sendMagnetToAria2c(linkToDownload, folderName);
+					await sendTelegramMessage('Sent command, download will begin soon 👍👍', 'markdown');
+					return res.json('Okay');
+				} catch (err) {
+					return res.status(500).json({ err });
+				}
 				return res.json({ result: 'okay great I will download something for you' });
 			} else {
+				const sorryMessage =
+					'Sorry I cannot find that action you specified, currently only support download file';
+				await sendTelegramMessage(sorryMessage, 'markdown');
 				return res.json({
-					result:
-						'Sorry I cannot find that action you specified, currently only support download file',
+					result: sorryMessage,
 				});
 			}
 		}
