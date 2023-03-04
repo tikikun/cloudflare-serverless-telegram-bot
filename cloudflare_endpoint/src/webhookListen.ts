@@ -72,6 +72,8 @@ async function mainListener(request: Request) {
 			'/downstats': (chatId, apiKey) => dominicReportDownloadsStatus(chatId, apiKey),
 			'/pauseall': (chatId, apiKey) => pauseAll(chatId, apiKey),
 			'/askdom': (chatId, apiKey, ...question_parts) => askDom(chatId, apiKey, ...question_parts),
+			'/quickdom': (chatId, apiKey, ...question_parts) => quickDom(chatId, apiKey, ...question_parts),
+
 		};
 
 		/**
@@ -233,6 +235,19 @@ const askDom: TelegramOps = async (chatId: string, apiKey: string, ...question_p
 	const url = `${dominicDomain}/${DOM_ENDPOINT}`;
 	const queryUrl = `${url}?${new URLSearchParams({ question: question })}`;
 	//console.log(queryUrl);
+	const response = await fetch(queryUrl, {
+		method: 'GET',
+		headers: authHeaders(),
+	});
+	return new Response('Successfully asked Dom');
+};
+
+const quickDom: TelegramOps = async (chatId: string, apiKey: string, ...question_parts) => {
+	console.log(QUICKDOM);
+	const question = question_parts.join(' ');
+	const url = `${dominicDomain}/${QUICKDOM}`;
+	const queryUrl = `${url}?${new URLSearchParams({ question: question })}`;
+	console.log(queryUrl);
 	const response = await fetch(queryUrl, {
 		method: 'GET',
 		headers: authHeaders(),
