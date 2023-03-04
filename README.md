@@ -2,7 +2,7 @@
 
 
 
-# Workflow of how This chatbot works
+## Workflow of how This chatbot works
 ![](assets/2023-03-04-14-49-56.png)
 
 Will build more endpoint in the future, using typescript
@@ -36,7 +36,7 @@ Just like below images
 
 ![](assets/2023-03-03-13-36-41.png)
 
-# Installation and setup
+## Installation and setup
 To make cloudflare worker to be working normally, here is the required secret files you need to input into the cloudflare secret
 
 List of required secrets for the cloudflare worker project
