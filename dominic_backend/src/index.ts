@@ -1,9 +1,9 @@
 import { OpenAIChat } from 'langchain/llms';
-import { BufferWindowMemory } from "langchain/memory";
-import { ConversationChain } from "langchain/chains";
-import { HNSWLib } from "langchain/vectorstores";
-import { OpenAIEmbeddings } from "langchain/embeddings";
-
+import { BufferWindowMemory } from 'langchain/memory';
+import { ConversationChain } from 'langchain/chains';
+import { HNSWLib } from 'langchain/vectorstores';
+import { OpenAIEmbeddings } from 'langchain/embeddings';
+import { Document } from 'langchain/document';
 import express, { Request, Response } from 'express';
 import * as fs from 'fs';
 
@@ -15,29 +15,65 @@ const configFileContents = fs.readFileSync(configFilePath, 'utf-8');
 const configObject = JSON.parse(configFileContents);
 
 // Initiate openai service
-const model = new OpenAIChat({ openAIApiKey:configObject.openaikey,modelName: 'gpt-3.5-turbo' });
+const model = new OpenAIChat({ openAIApiKey: configObject.openaikey, modelName: 'gpt-3.5-turbo' });
 const memory = new BufferWindowMemory({ k: 30 });
 const chain = new ConversationChain({ llm: model, memory: memory });
-const embeddings = new OpenAIEmbeddings({ openAIApiKey:configObject.openaikey});
+const embeddings = new OpenAIEmbeddings({ openAIApiKey: configObject.openaikey });
 
 // Command list
-const com_list = ['getfxrate - fxrate',
-'getfxratevnd - fxrateVND',
-'getcryptoprice - get crypto price',
-'getbtc - get bitcoin price',
-'listfiles - listfiles on the server now',
-'getfile - download the file using the link',
-'downstats - get status of downloads',
-'pauseall - pause all operation (seeding)',
-'askdom - to ask Dom (memory size 30']
+const com_list = [
+	'getfxrate - fxrate',
+	'getfxratevnd - fxrateVND',
+	'getcryptoprice - get crypto price',
+	'getbtc - get bitcoin price',
+	'listfiles - listfiles on the server now',
+	'getfile - download the file using the link',
+	'downstats - get status of downloads',
+	'pauseall - pause all operation (seeding)',
+	'askdom - to ask Dom (memory size 30',
+];
 
 // Set up vector store
 const vectorStore = await HNSWLib.fromTexts(
 	com_list,
 	Array.from({ length: com_list.length }, (_, i) => ({ id: i })),
 	embeddings
-  );
-  
+);
+
+type SearchedDoc = [Document, number];
+
+// helper funcitons
+function getSmallestDistanceDocument(arr: SearchedDoc[]): SearchedDoc | undefined {
+	let smallestSubArray: SearchedDoc | undefined;
+	let smallestValue: number | undefined;
+
+	for (const subArray of arr) {
+		const value = subArray[1];
+		if (smallestValue === undefined || value < smallestValue) {
+			smallestValue = value;
+			smallestSubArray = subArray;
+		}
+	}
+
+	return smallestSubArray;
+}
+
+function extractLinks(text: string): string[] {
+	const httpsRegex = /(https?:\/\/[^\s]+)/gi;
+	const ftpRegex = /(ftp:\/\/[^\s]+)/gi;
+	//const magnetRegex = /(magnet:\?xt=[^\s]+)/gi;
+
+	const httpsLinks = text.match(httpsRegex) || [];
+	const ftpLinks = text.match(ftpRegex) || [];
+	//const magnetLinks = text.match(magnetRegex) || [];
+
+	const links = [
+		...httpsLinks,
+		...ftpLinks,
+		//...magnetLinks
+	];
+	return links;
+}
 
 const app = express();
 
@@ -187,31 +223,56 @@ app.get('/askDom', async (req: Request, res: Response) => {
 	try {
 		const question = String(req.query.question);
 		const openAiResponse = await chain.call({ input: question });
-		console.log(openAiResponse.response)
-		res.send(openAiResponse.response)
+		console.log(openAiResponse.response);
+		res.send(openAiResponse.response);
 		await sendTelegramMessage(openAiResponse.response, 'markdown');
-		;
 	} catch (err) {
 		res.status(500).json({ err });
 	}
-
 });
 
-app.get('/quickDom',async (req:Request, res: Response) => {
+app.get('/quickDom', async (req: Request, res: Response) => {
 	try {
 		const question = String(req.query.question);
-		const result = await vectorStore.similaritySearchWithScore(question);
-		console.log(result)
-		res.json(result)
+		const searchResult = await vectorStore.similaritySearchWithScore(question);
+		const result: SearchedDoc[] = searchResult.map(([doc, num]) => [doc as Document, num]);
+		const nearestResult = getSmallestDistanceDocument(result);
+		if (nearestResult) {
+			const nearestResultPageContent = nearestResult[0].pageContent;
+			if (nearestResultPageContent === 'getfile - download the file using the link') {
+				const linkToDownload: string = extractLinks(question)[0];
+				const folderName =
+					await model.call(`Extract folder name from conversation below, it's often after the link 
+				Please tell the folder name directly even based on guessing, don't say anything else.
+				Here is example below
+				"""
+				Download a file with this link https://nyaa.si/download/1644648.torrent to okaylah
+				Folder name: okaylah
+				"""
+				
+				Do the same for this one
+				"""
+				${question}
+				"""
+				Okay your turn go Folder name:`);
+				console.log(linkToDownload, folderName);
+				return res.json({ result: 'okay great I will download something for you' });
+			} else {
+				return res.json({
+					result:
+						'Sorry I cannot find that action you specified, currently only support download file',
+				});
+			}
+		}
+		return res.json({ response: 'not clear what trying to achieve' });
 		//const answer = await model.call(question);
 		//console.log(answer)
 		//res.send(answer)
 		//await sendTelegramMessage(answer, 'markdown');
-		;
 	} catch (err) {
-		res.status(500).json({err})
+		res.status(500).json({ err });
 	}
-})
+});
 
 app.listen(3000, () => {
 	console.log('Server listening on port 3000');
