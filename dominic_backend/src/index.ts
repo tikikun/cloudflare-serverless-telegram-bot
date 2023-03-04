@@ -129,10 +129,10 @@ app.get('/downloadfile', async (req: Request, res: Response) => {
  */
 app.get('/listfiles', (req: Request, res: Response) => {
 	try {
-		const files = fs.readdirSync('/Volumes/Tuandisk');
+		const files = fs.readdirSync(configObject.filesRoot);
 		const folders = [];
 		for (const file of files) {
-			const stats = fs.statSync(`/Volumes/Tuandisk/${file}`);
+			const stats = fs.statSync(`${configObject.filesRoot}/${file}`);
 			if (stats.isDirectory()) {
 				folders.push(file);
 			}
@@ -290,7 +290,7 @@ app.listen(3000, () => {
 });
 
 async function sendMagnetToAria2c(uri: string, folder: string) {
-	const rootDir = '/Volumes/Tuandisk';
+	const rootDir = configObject.filesRoot;
 	const aria2cUrl = 'http://localhost:6800/jsonrpc';
 	const id =
 		Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
