@@ -37,4 +37,6 @@ tmux new -d -s dominic_backend "cd dominic_backend && npm run start"
 
 tmux new -d -s aria-rpc "aria2c --conf-path=aria2c_service/aria2.conf"
 
+tmux new -d -s filebrowser "/opt/homebrew/bin/filebrowser"
+
 echo "Aria2 server and dominic_backend started"

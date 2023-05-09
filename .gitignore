@@ -8,3 +8,4 @@ worker_config.json
 aria2c_service/aria2.conf
 **/dist
 secret_local
+filebrowser.db
