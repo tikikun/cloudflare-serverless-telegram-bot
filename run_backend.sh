@@ -35,7 +35,7 @@ fi
 
 tmux new -d -s dominic_backend "cd dominic_backend && npm run start"
 
-tmux new -d -s aria-rpc "aria2c --conf-path=aria2c_service/aria2.conf"
+tmux new -d -s aria-rpc "LC_MESSAGES="C" aria2c --conf-path=aria2c_service/aria2.conf"
 
 tmux new -d -s filebrowser "/opt/homebrew/bin/filebrowser -a 0.0.0.0 -r /Volumes/Tuandisk"
 
